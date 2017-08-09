@@ -9,7 +9,7 @@ export class PouchDbAdapter {
     private _couchDB: any;
     private _remoteCouchDBAddress: string;
     private _pouchDbName: string;
-
+    agent = 'bpatel';
     // rxjs behaviour subjects to expose stats flags
     syncStatus = new BehaviorSubject<boolean>(false);
     couchDbUp = new BehaviorSubject<boolean>(false);
@@ -27,7 +27,9 @@ export class PouchDbAdapter {
         this._pouchDB.sync(this._couchDB, {
             live: true,
             retry: true,
-            continuous: true
+            continuous: true,
+            filter: 'app/username',
+            query_params: { 'username': this.agent }
         })
             // attach sync status update functions to PouchDB events
             .on('paused', err => { this.syncStatusUpdate(); })

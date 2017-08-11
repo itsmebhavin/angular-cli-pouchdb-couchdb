@@ -1,4 +1,6 @@
+declare function require(name: string);
 import PouchDB from 'pouchdb';
+PouchDB.plugin(require('pouchdb-upsert'));
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 // import 'rxjs/add/observable/combineLatest';
 // import * as PouchDB from 'pouchdb';
@@ -9,7 +11,7 @@ export class PouchDbAdapter {
     private _couchDB: any;
     private _remoteCouchDBAddress: string;
     private _pouchDbName: string;
-    agent = 'bpatel';
+
     // rxjs behaviour subjects to expose stats flags
     syncStatus = new BehaviorSubject<boolean>(false);
     couchDbUp = new BehaviorSubject<boolean>(false);
@@ -20,20 +22,45 @@ export class PouchDbAdapter {
         this._pouchDbName = remoteCouchDBAddress
             .substr(remoteCouchDBAddress.lastIndexOf('/') + 1);
         // init local PouchDB
+
+        // new PouchDB(this._pouchDbName).destroy().then(function () {
+        //     // database destroyed
+        //     console.log('Local DB is Distroyed!!!!!!');
+
+        // }).catch(function (err) {
+        //     // error occurred
+        // });
         this._pouchDB = new PouchDB(this._pouchDbName);
         // init PouchDB adapter for remote CouchDB
         this._couchDB = new PouchDB(remoteCouchDBAddress);
         // sync the PouchDB and CouchDB
-        this._pouchDB.sync(this._couchDB, {
+
+         this._pouchDB.sync(this._couchDB, {
             live: true,
             retry: true,
-            continuous: true,
-            filter: 'app/username',
-            query_params: { 'username': this.agent }
         })
-            // attach sync status update functions to PouchDB events
             .on('paused', err => { this.syncStatusUpdate(); })
             .on('change', info => { this.syncStatusUpdate(); });
+
+
+        // this._pouchDB.replicate.from(this._couchDB, {
+        //     live: true,
+        //     retry: true,
+        //     continuous: true,
+        //     filter: 'app/by_username',
+        //     query_params: { 'username': 'bpatel' }
+        // })
+        //     .on('paused', err => { this.syncStatusUpdate(); })
+        //     .on('change', info => { this.syncStatusUpdate(); });
+
+
+        // this._pouchDB.replicate.to(this._couchDB, {
+        //     live: true,
+        //     retry: true,
+        //     continuous: true,
+        // })
+        //     .on('paused', err => { this.syncStatusUpdate(); })
+        //     .on('change', info => { this.syncStatusUpdate(); });
     }
 
     // pretty basic and crude function
@@ -81,7 +108,7 @@ export class PouchDbAdapter {
     }
 
     // part of the JSON returned by PouchDB from the info() method
-    // is "update_seq". When these numbers are equal then the databases
+    // is 'update_seq'. When these numbers are equal then the databases
     // are in sync. The way its buried in the JSON means some string
     // functions are required to extract it
     private checkPouchCouchSync(): Promise<boolean> {
@@ -92,7 +119,7 @@ export class PouchDbAdapter {
                 // using the 0 and 1 items in the array of two
                 // that is produced by the Promise
                 // Do some string trickery to get a number for update_seq
-                // and return "true" if the numbers are equal.
+                // and return 'true' if the numbers are equal.
                 .then((results: any[]) => {
                     return (Number(String(results[0]
                         .update_seq)

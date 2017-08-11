@@ -29,6 +29,10 @@
             <p>This button fires a method in this component which sends a JSON doc to the database</p>
             <form>
                 <div class="form-group">
+                    <label for="username">Username</label>
+                    <input #username class="form-control">
+                </div>
+                <div class="form-group">
                     <label for="player">player</label>
                     <input #player class="form-control">
                 </div>
@@ -36,7 +40,7 @@
                     <label for="position">positon</label>
                     <input #position class="form-control">
                 </div>
-                <button (click)="post({player: player.value, position: position.value})" type="button" class="btn btn-primary">post this as new document</button>
+                <button (click)="post({username:username.value, player: player.value, position: position.value})" type="button" class="btn btn-primary">post this as new document</button>
             </form>
         </div>
     </div>

@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 // the pouchdb-adapter file/class in the same folder
 import { PouchDbAdapter } from './pouchdb-adapter';
 
-const REMOTE_COUCH_DB_ADDRESS = 'http://localhost:5984/sandbox';
+const REMOTE_COUCH_DB_ADDRESS = 'http://admin:password@localhost:5984/sandbox';
 
 @Injectable()
 export class PouchdbService {

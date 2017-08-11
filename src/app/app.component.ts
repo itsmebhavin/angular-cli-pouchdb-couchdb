@@ -35,8 +35,8 @@ export class AppComponent {
       });
   }
 
-  post(player: string, position: string) {
-    this.pouchdbservice.post({player: player, position: position})
+  post(username: string, player: string, position: string) {
+    this.pouchdbservice.post({username: username, player: player, position: position})
     .then((response) => {
       console.log(JSON.stringify(response));
     });

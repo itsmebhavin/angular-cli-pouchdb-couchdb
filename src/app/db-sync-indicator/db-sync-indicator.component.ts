@@ -26,7 +26,7 @@ export class DbSyncIndicatorComponent {
       this.syncText = (this.dbName + ' ' || '') + 'Offline';
     } else if (!this.syncStatus) {
       this.syncStyle.color = 'blue';
-      this.syncText = (this.dbName + ' ' || '') + 'Synchronising';
+      this.syncText = (this.dbName + ' ' || '') + 'Trying to Sync.(Couch is up but sync is down)';
     } else {
       this.syncStyle.color = 'green';
       this.syncText = (this.dbName + ' ' || '') + 'Synchronised';

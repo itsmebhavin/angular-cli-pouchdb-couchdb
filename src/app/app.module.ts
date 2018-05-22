@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { DbSyncIndicatorComponent } from './db-sync-indicator/db-sync-indicator.component';
 import { PouchdbService } from './pouchdb-service/pouchdb.service';
@@ -14,7 +14,7 @@ import { PouchdbService } from './pouchdb-service/pouchdb.service';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpClientModule
   ],
   providers: [
     PouchdbService

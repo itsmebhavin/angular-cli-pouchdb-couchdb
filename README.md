@@ -26,3 +26,24 @@ Before running the tests make sure you are serving the app via `ng serve`.
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+```
+Another strategy is to use one-db-per-user, but add a server-side process to occasionally dump user databases into some global database. E.g. here is a simple Node app:
+
+var Promise = require('bluebird');
+var request = Promise.promisifyAll(require('request'));
+function syncEverythingToGlobalDB() {
+  return request.getAsync('http://localhost:5984/_all_dbs').then(function (dbNames) {
+    // find your user databases, however you named them
+    var userDBs = dbNames.filter(function (x) { return x.indexOf('userdb') === 0; });
+    return Promise.all(userDBs.map(function (userDB) {
+        return request.postAsync({
+          url: 'http://localhost:5984/_replicate',
+          json: {source: 'http://localhost:5984/' + userDB, target: 'http://localhost:5984/globaldb'}
+       });
+  });
+}
+// do it every hour
+setInterval(syncEverythingToGlobalDB, 3600000);
+Notice I recommend using pure CouchDB for this because then you're using CouchDB's replicator. If you used PouchDB's replicator, then you'd have a lot of Node EventEmitters in one process and it would probably be inefficient; CouchDB is much better at handling many simultaneous replications. Edit: heck, you could just use CouchDB's continuous replication instead of doing it in a setInterval.
+```

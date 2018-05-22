@@ -1,13 +1,19 @@
 <div style="padding:10px">
     <div>
         <h3>
-            {{title}}
+            {{title}} - {{envName}}
         </h3>
     </div>
-    <div class="card">
+    <div class="card" style="font-size:small">
         <div class="card-block">
             <p>This Angular2 component injects a service (pouchdb.service) which creates a new in-browser PouchDB to synchronise with the CouchDB Database. The URL is set as a const in pouchdb.service.ts (change it to suit your CouchDB databse).</p>
             <p style="font-family: Courier New">{{ remoteCouchDBAddress }}</p>
+        </div>
+    </div>
+    <div class="card" style="font-size:small">
+        <div class="card-block">
+            <p>This Angular2 component changes color and text depending on the online/offline/sync status of the PouchDB / CouchDB set up. Stop the CouchDB service and it should change</p>
+            <db-sync-indicator [syncStatus]="syncStatus" [serverUp]="couchDbUp"></db-sync-indicator>
         </div>
     </div>
     <div class="card">
@@ -40,14 +46,9 @@
                     <label for="position">positon</label>
                     <input #position class="form-control">
                 </div>
-                <button (click)="post({username:username.value, player: player.value, position: position.value})" type="button" class="btn btn-primary">post this as new document</button>
+                <button (click)="post({username:username.value})" type="button" class="btn btn-primary">post this as new document</button>
             </form>
         </div>
     </div>
-    <div class="card">
-        <div class="card-block">
-            <p>This Angular2 component changes color and text depending on the online/offline/sync status of the PouchDB / CouchDB set up. Stop the CouchDB service and it should change</p>
-            <db-sync-indicator [syncStatus]="syncStatus" [serverUp]="couchDbUp"></db-sync-indicator>
-        </div>
-    </div>
+
 </div>

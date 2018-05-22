@@ -1,7 +1,7 @@
 declare function require(name: string);
 import PouchDB from 'pouchdb';
 PouchDB.plugin(require('pouchdb-upsert'));
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 // import 'rxjs/add/observable/combineLatest';
 // import * as PouchDB from 'pouchdb';
 
@@ -15,52 +15,60 @@ export class PouchDbAdapter {
     // rxjs behaviour subjects to expose stats flags
     syncStatus = new BehaviorSubject<boolean>(false);
     couchDbUp = new BehaviorSubject<boolean>(false);
+    agentName = 'jdoe';
 
     constructor(remoteCouchDBAddress: string) {
         this._remoteCouchDBAddress = remoteCouchDBAddress;
         // string function to extract the database name from the URL
         this._pouchDbName = remoteCouchDBAddress
-            .substr(remoteCouchDBAddress.lastIndexOf('/') + 1);
+            .substr(remoteCouchDBAddress.lastIndexOf('/') + 1) + '_' + this.agentName;
         // init local PouchDB
 
         // new PouchDB(this._pouchDbName).destroy().then(function () {
-        //     // database destroyed
         //     console.log('Local DB is Distroyed!!!!!!');
-
         // }).catch(function (err) {
         //     // error occurred
         // });
         this._pouchDB = new PouchDB(this._pouchDbName);
-        // init PouchDB adapter for remote CouchDB
         this._couchDB = new PouchDB(remoteCouchDBAddress);
-        // sync the PouchDB and CouchDB
-
-         this._pouchDB.sync(this._couchDB, {
+        this._pouchDB.replicate.from(this._couchDB, {
             live: true,
             retry: true,
+            filter: 'app/by_username',
+            since: 0,
+            query_params: { 'username': this.agentName }
         })
             .on('paused', err => { this.syncStatusUpdate(); })
-            .on('change', info => { this.syncStatusUpdate(); });
+            .on('change', info => {
+                console.log('C2P CHANGE: ', info);
+                this.syncStatusUpdate();
+            })
+            .on('error', err => {
+                // TODO: Write error handling and display message to user
+                console.error('C2P Error: ', err);
+            })
+            .on('active', info => {
+                // TODO: Write code when sync is resume after pause/error
+                console.log('C2P Resume: ', info);
+            });
 
-
-        // this._pouchDB.replicate.from(this._couchDB, {
-        //     live: true,
-        //     retry: true,
-        //     continuous: true,
-        //     filter: 'app/by_username',
-        //     query_params: { 'username': 'bpatel' }
-        // })
-        //     .on('paused', err => { this.syncStatusUpdate(); })
-        //     .on('change', info => { this.syncStatusUpdate(); });
-
-
-        // this._pouchDB.replicate.to(this._couchDB, {
-        //     live: true,
-        //     retry: true,
-        //     continuous: true,
-        // })
-        //     .on('paused', err => { this.syncStatusUpdate(); })
-        //     .on('change', info => { this.syncStatusUpdate(); });
+        this._pouchDB.replicate.to(this._couchDB, {
+            live: true,
+            retry: true
+        })
+            .on('paused', err => { this.syncStatusUpdate(); })
+            .on('change', info => {
+                console.log('P2C CHANGE: ', info);
+                this.syncStatusUpdate();
+            })
+            .on('error', err => {
+                // TODO: Write error handling and display message to user
+                console.error('P2C Error: ', err);
+            })
+            .on('active', info => {
+                // TODO: Write code when sync is resume after pause/error
+                console.log('P2C Resume: ', info);
+            });
     }
 
     // pretty basic and crude function
@@ -130,7 +138,7 @@ export class PouchDbAdapter {
                             .split('-')[0]));
                 })
                 // on error just resolve as false
-                .catch((error) => { return false; });
+                .catch((error) => false);
         } else {
             // if one of the PouchDB or CouchDB objects doesn't exist yet
             // return resolve false

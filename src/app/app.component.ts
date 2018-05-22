@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { PouchdbService } from './pouchdb-service/pouchdb.service';
+import { environment } from '../environments/environment';
+
 
 @Component({
   selector: 'app-root',
@@ -9,11 +11,12 @@ import { PouchdbService } from './pouchdb-service/pouchdb.service';
 export class AppComponent {
 
   // public properties for data binding in template
-  title  = 'Angular2 PouchDB CouchDB Integration Demo';
+  title = 'Angular2 PouchDB CouchDB Integration Demo';
   remoteCouchDBAddress: string;
   dataString: string;
   syncStatus: boolean;
   couchDbUp: boolean;
+  envName = environment.envName;
 
   // constructor to wire up the PouchDbService and its observables
   constructor(private pouchdbservice: PouchdbService) {
@@ -35,10 +38,19 @@ export class AppComponent {
       });
   }
 
-  post(username: string, player: string, position: string) {
-    this.pouchdbservice.post({username: username, player: player, position: position})
-    .then((response) => {
-      console.log(JSON.stringify(response));
-    });
+  post(doc) {
+    this.pouchdbservice.post(doc)
+      .then((response) => {
+        console.log(JSON.stringify(response));
+      });
+  }
+
+  randomString(length) {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < length; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
   }
 }

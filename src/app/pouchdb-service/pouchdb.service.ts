@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 // the pouchdb-adapter file/class in the same folder
 import { PouchDbAdapter } from './pouchdb-adapter';
 

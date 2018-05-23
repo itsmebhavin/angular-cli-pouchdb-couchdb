@@ -41,7 +41,7 @@
 import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
 
-
+(window as any).global = window;
 /**
  * Required to support Web Animations `@angular/animation`.
  * Needed for: All but Chrome, Firefox and Opera. http://caniuse.com/#feat=web-animation

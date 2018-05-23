@@ -4,13 +4,13 @@ import { Component, Input, OnChanges } from '@angular/core';
   selector: 'db-sync-indicator',
   templateUrl: './db-sync-indicator.component.html'
 })
-export class DbSyncIndicatorComponent {
+export class DbSyncIndicatorComponent implements OnChanges {
 
   syncText: string;
   syncStyle = { 'color': 'red' };
 
   @Input()
-  dbName: string = '';
+  dbName = '';
 
   @Input()
   syncStatus: boolean;

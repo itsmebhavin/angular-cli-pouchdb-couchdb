@@ -1,5 +1,5 @@
 declare function require(name: string);
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
 PouchDB.plugin(require('pouchdb-upsert'));
 import { BehaviorSubject } from 'rxjs';
 // import 'rxjs/add/observable/combineLatest';

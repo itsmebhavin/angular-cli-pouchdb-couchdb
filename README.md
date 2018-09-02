@@ -47,3 +47,8 @@ function syncEverythingToGlobalDB() {
 setInterval(syncEverythingToGlobalDB, 3600000);
 Notice I recommend using pure CouchDB for this because then you're using CouchDB's replicator. If you used PouchDB's replicator, then you'd have a lot of Node EventEmitters in one process and it would probably be inefficient; CouchDB is much better at handling many simultaneous replications. Edit: heck, you could just use CouchDB's continuous replication instead of doing it in a setInterval.
 ```
+
+
+### Author
+  - This sample i have made only for my knowledge purpose and no claiming as original owner of it. 
+  - original code from [ https://github.com/timbophillips ] `https://github.com/timbophillips/angular-cli-pouchdb`
